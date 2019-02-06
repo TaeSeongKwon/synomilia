@@ -23,7 +23,7 @@ Our Goal is as follow :
 - Understand Thread on Linux
 
 
-요구 사항(Requirement)
+# 요구 사항(Requirement)
 1. CLI(Command Line Interface)환경에서 이용가능하도록 지원한다.
 We support the evironment on CLI(Command Line Interface)
 
