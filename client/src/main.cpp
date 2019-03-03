@@ -15,9 +15,8 @@ int main(int argc, char **argv)
 	printf("start core\n");
     shared_ptr<Core> obj(new Core());
     obj->addEvent("data", func_); 
-    if(obj->start("127.0.0.1") == 0)
+    if(obj->start() == 0)
     {
-        obj->run();
         sleep(10);
         obj->end();
     }
