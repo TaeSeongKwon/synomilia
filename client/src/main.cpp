@@ -8,7 +8,7 @@ using namespace synomilia;
 using namespace std;
 void func_(void *data)
 {
-    printf("hello\n");
+    printf(">>>> EVENT : hello\n");
 }
 int main(int argc, char **argv)
 {

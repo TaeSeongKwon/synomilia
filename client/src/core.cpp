@@ -19,7 +19,12 @@ synomilia::Core::~Core()
 {
    printf("destroy\n");
 }
-
+/*
+ *  @brief The start() method starts thread after create socket and bind address, port
+ *  @param *addr This is IPv4 String of Server. (default 127.0.0.1)
+ *  @param port This is Port Number of Server. (default 2911)
+ *  @return if thread is successfully started, return 0 otherwise, number except 0.
+ */
 int synomilia::Core::start(const char *addr, int port)
 {
     this->remote_addr = addr;
@@ -32,16 +37,20 @@ int synomilia::Core::start(const char *addr, int port)
     struct sockaddr_in server_addr;
     struct in_addr server_in;
 
+    // check ip format 
     if( inet_pton(AF_INET, this->remote_addr.c_str(), &server_in) <= 0)
     {
         printf(">> Connect fail..(%d)\n", errno);
         return -1;
     }
+
+    // Set address informatin
     memset(&server_addr, 0, sizeof(struct sockaddr_in));
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = inet_addr(this->remote_addr.c_str());
     server_addr.sin_port = htons(this->remote_port);
     
+    // Try connect
     int client_len = sizeof(server_addr);
     if(connect(this->socket_fd, (struct sockaddr*)&server_addr, client_len) <0)
     {
@@ -49,7 +58,6 @@ int synomilia::Core::start(const char *addr, int port)
         return -1;
     }
     printf(">> Connect Success!\n"); 
-
 
     return this->run();
 }
@@ -61,7 +69,9 @@ int synomilia::Core::end()
     return 0;
 }
 
-
+/*
+ * @brief This is thread run method
+ */
 int synomilia::Core::run()
 {
     std::pair<int , std::map<std::string, Function>* > *arg = new std::pair<int, std::map<std::string, Function> *>();
@@ -73,10 +83,12 @@ int synomilia::Core::run()
     return pthread_detach(this->thread);
 }
 
+
 void synomilia::Core::addEvent(std::string evt, Function func)
 {
     this->evt_map[evt] = func;
 }
+
 
 void* synomilia::recvHandler(void* data)
 {
@@ -103,10 +115,25 @@ void* synomilia::recvHandler(void* data)
         auto itr = events->find(std::string(buff));
         if(itr != events->end())
         {
+            std::pair<Function, char*> *obj = new std::pair<Function, char*>();
+            obj->first = itr->second;
+            obj->second = (char*)std::string(buff).c_str();
             pthread_t thread;
-            pthread_create(&thread, 0, eventHanler, );
-            printf(">> call event : %s\n", buff);
-            itr->second(nullptr);
+            pthread_create(&thread, 0, eventHandler, (void*)obj);
+            // printf(">> call event : %s\n", buff);
+            // itr->second(nullptr);
         }
     }
+}
+
+/*
+ * @brief This is thread method to call the event 
+ */
+void* synomilia::eventHandler(void *arg)
+{
+    std::pair<Function, char *> *obj = (std::pair<Function, char *> *)arg;
+    Function func = obj->first;
+    char* data = obj->second;
+    // TODO Event data
+    func(nullptr);
 }
