@@ -89,7 +89,36 @@ void synomilia::Core::addEvent(std::string evt, Function func)
     this->evt_map[evt] = func;
 }
 
+int synomilia::Core::sendData(void *buff, size_t length)
+{
+    std::pair<int, std::pair<void*, size_t> > *arg = new std::pair<int, std::pair<void*, size_t> >();
+    arg->first = this->socket_fd;
+    arg->second = {buff, length};
+    pthread_t sendThread;
+    int is_create = pthread_create(&sendThread, 0, sendHandler, (void*)arg);
+    if(is_create != 0 ) return is_create;
+    int ret = pthread_detach(sendThread);
+    return ret;
+}
 
+void* synomilia::sendHandler(void* arg)
+{
+    std::pair<int, std::pair<void*, size_t> > *data = (std::pair<int, std::pair<void*, size_t> >*)arg;
+    int socket_fd = data->first;
+    void* buff = data->second.first;
+    size_t length = data->second.second;
+    int ret = 0 ;
+
+    if( (ret = send(socket_fd, buff, length, 0)) <= 0 )
+    {
+        printf("[ERROR] fail the message send.(%s)\n", strerror(errno));
+    }
+    else 
+    {
+        printf("[SEND] %s\n", (char*)buff); 
+    }
+
+}
 void* synomilia::recvHandler(void* data)
 {
     printf(">> initialize recieve handler - 1 \n");
@@ -136,4 +165,6 @@ void* synomilia::eventHandler(void *arg)
     char* data = obj->second;
     // TODO Event data
     func(nullptr);
+
 }
+

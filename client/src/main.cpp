@@ -17,7 +17,12 @@ int main(int argc, char **argv)
     obj->addEvent("data", func_); 
     if(obj->start() == 0)
     {
-        sleep(10);
+        for(int i = 0; i<10; i++)
+        {
+            sleep(1);
+            string msg = "Hello World";
+            obj->sendData((void*)msg.c_str(), msg.size());
+        }
         obj->end();
     }
 	return 0;

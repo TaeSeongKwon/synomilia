@@ -1,0 +1,94 @@
+* SYNOMILIA Client Structure
+  - Synomilia 클라이언트는 CLI환경에서 동작을 지원해야 하므로 구조를 2부분으로 나눈다. 
+    1) Core 
+    2) UI
+
+
+* 기능 별 필요 Packet 정보
+  로그인
+  - Access to Server after authorization the account.
+    If unauthorize the account, reply the 404(Not found)  or 403(access denined) otherwise, 
+    if success authorized, reply 200
+    Request : 아이디, 비밀번호
+    Response : 응답코드 ( 로그인의 성공여부에 따른 코드 )
+
+  로그아웃
+  - 현재 접속된 계정을 사용종료한다. 성공적으로 로그아웃을 할 경우 200으로 보내며 
+    실패할 경우 400으로 응답한다.
+    Request : 아이디 또는 세션번호
+    Response : 응답코드 ( 정상적으로 로그아웃이 되었는지 코드 )
+
+  지인목록
+  - 해당 계정의 지인의 목록을 받아온다. 성공적으로 수신할경우 200, 잘못된 요청이라면 403을 응답.
+    Request : 아이디
+    Response : 응답코드, 지인목록(아이디)
+           ( 성공적으로 지인의 목록을 조회하면 성공 코드 및 지인의 목록을 응답 한다. )
+  채팅목록 
+  - 현재 메시지중인 목록을 요청한다.
+    Request : 아이디
+    Response : 응답코드, 채팅 목록
+
+  메시지 
+  - 현재 만들어진 그룹(개인)으로 메시지를 전송한다. 유효한 요청이라면 200, 잘못된 것이라면 403, 404를 보냄.
+    Request : user id, 그룹 아이디
+    Response : 응답코드
+           ( 유저 및 그룹 아이디를 조회하며 정상적인 처리라면 수신함을 응답한다. )
+
+  새 메시지
+  - 기존의 메시지 그룹이 아닌 새로운 구성원으로 메시지를 시작한다. 
+    요청된 구성원은 모두 서버에 등록된 계정이어야하며 만약 유효하지 않은 계정이 있다면
+    Reject(404) 시킨다. 성공적으로 수행할 경우 200 응답을 보낸다.
+
+    Request : 유저아이디, 메시지 구성의 아이디 
+    Response : 응답코드, 그룹 아이디
+           (유저아이디로 인증, 구성원의 아이디검색 및 유효성 검사후 응답) 
+
+  지인추가(INVITE)
+  - 요청메시지만 보내기만하고 수락여부에 상관없이 응답한한다.
+    이 정보는 서버에 저장하고 상대가 접속되어 있는경우 바로 알리며
+    그렇지 않은 경우 상대가 로그인하면 알람을 띄운다.
+    이때 응답에 따라 이 요청을 삭제한다. 상대에 대한 응답또한 위와 동일하게 동작한다.
+
+    Request : 유저아이디, 상대 아이디
+    Response : 응답코드
+           (요청이 성공적으로 수신되었는지 
+            상대 아이디가 존재하는지, 유저의 아이디가 유효한 아이디인지)
+
+  알림(NOTIFY)(서버측에서 알리는거)
+  - 유저에게 특정 정보를 알린다. 지인요청, 지인 응답...
+    Request : 
+    Response : 정상적으로 수신함을 응답
+
+  PUBLISH(클라이언트 측에서 알리는거)
+  - PUBLISH is message to notify the information to the server. 
+    the received server processes the something behavior and then it responses for received message to the client.
+    Request : any data...
+    Response : response code for message recieved
+
+여기서 문제점... 
+REQUEST메시지를 보냈다면 서버로부터 받은 응답은 클라이언트가 어느 REQUEST의 응답인지 
+어떻게 알 수 있을까???
+
+
+
+
+
+작성중.....
+* Protocol Structure
+  메소드 : | LOGIN   | LOGOUT     | NOTIFY | PUBLISH | REGISTER | MESSAGE | CREATE | INVITE 
+
+  메소드별 Data : 
+           +---------------------------------------------------------+
+           | LOGIN   | ID         | PWD                              |
+           |---------------------------------------------------------|
+           | LOGOUT  | ID                                            |
+           |---------------------------------------------------------|
+           | REQUEST | SEARCH     | USER_ID                          |
+           |         | MESSAGE    | USER_CHAT_ID | CHAT_ID | MESSAGE |
+           |         | ADD_FRIEND | USER_ID                          |
+           |         | NEW        | USER_ID LIST                     |
+           +---------------------------------------------------------+
+
+
+           
+

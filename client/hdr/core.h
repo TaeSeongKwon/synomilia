@@ -50,7 +50,10 @@ namespace synomilia
 
         // register event callbak
         void addEvent(std::string, Function);
-        
+
+        /* method for communication */
+        int sendData(void *buff, size_t length);
+
     };
 }
 

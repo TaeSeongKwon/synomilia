@@ -8,10 +8,11 @@ server.listen(3)
 while True :
     client_socket, addr = server.accept()
     for i in range(10) :
-        client_socket.send("hello_%d"%i)
-        time.sleep(1)
         client_socket.send("data")
+        data = client_socket.recv(1024)
+        print ">>>%s"%data
         time.sleep(1)
+
     client_socket.close()
 
 
