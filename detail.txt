@@ -65,16 +65,25 @@
     Request : any data...
     Response : response code for message recieved
 
-여기서 문제점... 
-REQUEST메시지를 보냈다면 서버로부터 받은 응답은 클라이언트가 어느 REQUEST의 응답인지 
-어떻게 알 수 있을까???
+
+* Packet Structure 
+      0  1                    8          12 13                                           28          32 
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+      |TP|       METHOD       |                          LENGTH                           |   EMPTY   |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+      |        TRANSACTION NUMBER         |ED|                     PAYLOAD                            |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+      |                                              ....                                             |
+      +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+      
+      - TP                : type, REQUEST or RESPONSE
+      - METHOD            : Operation Type to process in the Server 
+      - LENGTH            : Total Size of Packet 
+      - TRANSACTION NUMER : Identity of Request Packet, Server shall include the Transaction Number of request when it response to client.
+      - ED                : End flag, 1 is end of Packet 
+      - PAYLOAD           : This is realy data except header data. 
 
 
-
-
-
-작성중.....
-* Protocol Structure
   메소드 : | LOGIN   | LOGOUT     | NOTIFY | PUBLISH | REGISTER | MESSAGE | CREATE | INVITE 
 
   메소드별 Data : 
