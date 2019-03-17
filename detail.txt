@@ -67,20 +67,21 @@
 
 
 * Packet Structure 
-      0  1                    8          12 13                                           28          32 
+      0  1                    8          12          16                      24             29       32 
       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-      |TP|       METHOD       |                          LENGTH                           |   EMPTY   |
+      |TP|       METHOD       |                          LENGTH                              |END FLAG|
       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-      |        TRANSACTION NUMBER         |ED|                     PAYLOAD                            |
+      |        TRANSACTION NUMBER         |               INDEX               |         PAYLOAD       |
       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
       |                                              ....                                             |
       +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
       
       - TP                : type, REQUEST or RESPONSE
       - METHOD            : Operation Type to process in the Server 
-      - LENGTH            : Total Size of Packet 
+      - LENGTH            : Total Size of Packet (max size 1MB + 7 Byte)
+      - END FLAG          : End flag, 1 is end of Packet 
       - TRANSACTION NUMER : Identity of Request Packet, Server shall include the Transaction Number of request when it response to client.
-      - ED                : End flag, 1 is end of Packet 
+      - INDEX             : index of packet (0~4095) (Payload is total 4GB)
       - PAYLOAD           : This is realy data except header data. 
 
 
